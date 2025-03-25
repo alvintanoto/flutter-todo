@@ -1,6 +1,20 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-void main() {
+import 'package:flutter/material.dart';
+import 'package:todo_app/pages/create_todo.dart';
+import './db/db.dart';
+import './pages/home.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isWindows || Platform.isLinux) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
+  await DatabaseHelper.instance.initDb();
+
   runApp(const MyApp());
 }
 
@@ -11,41 +25,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Todo App',
+      initialRoute: '/',
+      routes: {
+        '/add':  (context)=> CreateTodoPage()
+      },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Todo App'),
+      home: MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body:  Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-          ],
-        ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: null,
-        tooltip: 'Add',
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
