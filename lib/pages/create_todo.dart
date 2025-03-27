@@ -33,9 +33,12 @@ class _CreateTodoFormState extends State<CreateTodoForm> {
       return;
     }
 
-    await DatabaseHelper.instance.insertTodo(Todo(todo: todoController.text)).
-      then((_){
-        Navigator.pop(context);
+    Todo newTodo = Todo(todo: todoController.text, isDone: 0);
+
+    await DatabaseHelper.instance.insertTodo(newTodo).
+      then((id){
+        newTodo.id = id;
+        Navigator.pop(context, newTodo);
     });
   }
 
